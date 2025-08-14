@@ -1,35 +1,112 @@
 import streamlit as st
 
-# MBTI별 추천 직업 데이터 (예시)
+# -------------------- 설정 --------------------
+st.set_page_config(
+    page_title="MBTI 직업 추천", 
+    page_icon="💼",
+    layout="centered"
+)
+
+# CSS 스타일
+st.markdown("""
+<style>
+body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: #f4f6f8;
+}
+h1 {
+    color: #4a6fa5;
+}
+.job-card {
+    background-color: #ffffff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+}
+</style>
+""", unsafe_allow_html=True)
+
+# -------------------- 데이터 --------------------
 job_recommendations = {
-    "INTJ": ["데이터 사이언티스트", "전략 컨설턴트", "소프트웨어 아키텍트"],
-    "ENTP": ["창업가", "광고 기획자", "기술 혁신가"],
-    "INFJ": ["작가", "상담사", "인권 변호사"],
-    "ESFP": ["이벤트 플래너", "배우", "마케팅 전문가"],
-    # 필요한 MBTI 타입 계속 추가
+    "INTJ": [("데이터 사이언티스트", "데이터 분석 및 모델링 전문가"),
+             ("전략 컨설턴트", "기업의 전략 수립 및 문제 해결"),
+             ("소프트웨어 아키텍트", "시스템 설계 및 구조 결정")],
+    "ENTP": [("창업가", "새로운 비즈니스 창출"),
+             ("광고 기획자", "마케팅 캠페인 기획"),
+             ("기술 혁신가", "최신 기술 적용 및 개선")],
+    "INFJ": [("작가", "책, 소설, 시나리오 창작"),
+             ("상담사", "개인/심리 상담"),
+             ("인권 변호사", "사회적 약자 변호")],
+    "ESFP": [("이벤트 플래너", "행사 기획 및 진행"),
+             ("배우", "연기 및 무대 활동"),
+             ("마케팅 전문가", "브랜드 홍보 및 세일즈")],
+    "ISTJ": [("회계사", "재무 관리 및 회계"),
+             ("프로젝트 매니저", "프로젝트 계획 및 관리"),
+             ("품질 관리자", "품질 검사 및 보증")],
+    "ENFP": [("크리에이티브 디렉터", "창의적 콘텐츠 기획"),
+             ("여행 작가", "여행 기록 및 가이드"),
+             ("소셜 미디어 매니저", "온라인 마케팅 및 커뮤니티 관리")],
+    "ENTJ": [("경영 컨설턴트", "기업 운영 최적화"),
+             ("투자 분석가", "시장 분석 및 투자 결정"),
+             ("기업 임원", "조직 운영 및 리더십")],
+    "ISFJ": [("간호사", "환자 치료 및 관리"),
+             ("교사", "학생 교육 및 지도"),
+             ("행정 담당자", "사무 및 조직 지원")],
+    "ISTP": [("기계 엔지니어", "기계 설계 및 제작"),
+             ("자동차 정비사", "차량 점검 및 수리"),
+             ("드론 조종사", "드론 운용 및 촬영")],
+    "ESTP": [("영업 전문가", "제품 및 서비스 판매"),
+             ("구조대원", "응급 구조 및 안전 관리"),
+             ("스포츠 코치", "선수 훈련 지도")],
+    "INFP": [("작사가", "노랫말 창작"),
+             ("아동 심리치료사", "아이들의 심리 지원"),
+             ("환경 운동가", "환경 보호 및 지속 가능성 촉진")],
+    "ENFJ": [("홍보 전문가", "브랜드 커뮤니케이션"),
+             ("교육 컨설턴트", "교육 프로그램 기획"),
+             ("비영리 단체 리더", "사회 기여 프로젝트 운영")],
+    "ESFJ": [("이벤트 코디네이터", "행사 진행 및 기획"),
+             ("호텔 매니저", "호텔 운영 관리"),
+             ("고객 서비스 매니저", "고객 경험 관리")],
+    "ISFP": [("사진작가", "사진 촬영 및 편집"),
+             ("플로리스트", "꽃 디자인 및 판매"),
+             ("인테리어 디자이너", "공간 디자인 및 시공")],
+    "ESTJ": [("군 장교", "군대 지휘 및 관리"),
+             ("공장 관리자", "생산 라인 운영"),
+             ("행정 공무원", "행정 서비스 제공")],
+    "INTP": [("연구원", "학문 및 기술 연구"),
+             ("시스템 분석가", "IT 시스템 분석"),
+             ("발명가", "새로운 기술 개발")]
 }
 
-st.set_page_config(page_title="MBTI 직업 추천", page_icon="💼")
+# -------------------- 사이드바 --------------------
+st.sidebar.title("📌 앱 소개")
+st.sidebar.info(
+    "MBTI 성격 유형에 맞는 추천 직업을 알려주는 앱입니다.\n\n"
+    "MBTI를 선택하고 맞춤 직업 추천을 받아보세요!"
+)
+st.sidebar.write("개발자: ChatGPT")
 
-st.title("💼 MBTI 기반 직업 추천 앱")
+# -------------------- 메인 --------------------
+st.title("💼 MBTI 기반 직업 추천")
 
-# MBTI 선택
-mbti_list = list(job_recommendations.keys())
-selected_mbti = st.selectbox("당신의 MBTI를 선택하세요:", mbti_list)
+selected_mbti = st.selectbox("🔍 당신의 MBTI를 선택하세요", list(job_recommendations.keys()))
 
-# 추천 직업 표시
 if selected_mbti:
-    st.subheader(f"✨ {selected_mbti} 타입 추천 직업")
-    for job in job_recommendations[selected_mbti]:
-        st.write(f"- {job}")
+    st.subheader(f"✨ {selected_mbti} 추천 직업")
+    for job, desc in job_recommendations[selected_mbti]:
+        st.markdown(f"""
+        <div class='job-card'>
+            <h4>💡 {job}</h4>
+            <p>{desc}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-# 추가 기능: 검색
-search_job = st.text_input("관심 있는 직업 키워드로 검색해 보세요:")
+# -------------------- 검색 기능 --------------------
+st.subheader("🔎 직업 검색")
+search_job = st.text_input("관심 있는 직업 키워드를 입력하세요:")
 
 if search_job:
-    matched = [j for jobs in job_recommendations.values() for j in jobs if search_job in j]
-    if matched:
-        st.success(f"🔍 검색 결과: {', '.join(matched)}")
-    else:
-        st.warning("검색 결과가 없습니다.")
-
+    matched = []
+    for jobs in job_recommendations.values():
+        ma
