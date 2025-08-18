@@ -1,6 +1,5 @@
 import streamlit as st
 import random
-import os
 
 st.set_page_config(page_title="아이돌 MBTI 궁합 테스트", page_icon="💕", layout="centered")
 
@@ -54,7 +53,6 @@ idol_mbti = {
     "뷔 (BTS)": "ENFP",
     "아이유": "INFJ",
     "태연 (소녀시대)": "ESFJ",
-    # ENHYPEN
     "희승 (ENHYPEN)": "ISTP",
     "제이 (ENHYPEN)": "ENTP",
     "제이크 (ENHYPEN)": "ISTJ",
@@ -62,7 +60,6 @@ idol_mbti = {
     "선우 (ENHYPEN)": "ENFP",
     "정원 (ENHYPEN)": "ESTJ",
     "니키 (ENHYPEN)": "ESFP",
-    # 나머지 유형 채움
     "RM (BTS)": "ENTJ",
     "홍승한": "INFP",
     "효연 (소녀시대)": "INTJ",
@@ -72,26 +69,26 @@ idol_mbti = {
     "재현 (NCT)": "ENFJ",
 }
 
-# 아이돌 이미지 경로 (예시, 실제로는 프로젝트 폴더에 이미지 넣어야 함)
+# 아이돌 이미지 URL
 idol_images = {
-    "정국 (BTS)": "images/jungkook.jpg",
-    "뷔 (BTS)": "images/v.jpg",
-    "아이유": "images/iu.jpg",
-    "태연 (소녀시대)": "images/taeyeon.jpg",
-    "희승 (ENHYPEN)": "images/heeseung.jpg",
-    "제이 (ENHYPEN)": "images/jay.jpg",
-    "제이크 (ENHYPEN)": "images/jake.jpg",
-    "성훈 (ENHYPEN)": "images/sunghoon.jpg",
-    "선우 (ENHYPEN)": "images/sunoo.jpg",
-    "정원 (ENHYPEN)": "images/jungwon.jpg",
-    "니키 (ENHYPEN)": "images/niki.jpg",
-    "RM (BTS)": "images/rm.jpg",
-    "홍승한": "images/hongseunghan.jpg",
-    "효연 (소녀시대)": "images/hyoyeon.jpg",
-    "수호 (EXO)": "images/suho.jpg",
-    "진 (BTS)": "images/jin.jpg",
-    "차은우 (ASTRO)": "images/chaewoo.jpg",
-    "재현 (NCT)": "images/jaehyun.jpg",
+    "정국 (BTS)": "https://i.namu.wiki/i/KB9eB1EoK7C0HhuGnTwDJQ.webp",
+    "뷔 (BTS)": "https://i.namu.wiki/i/RodMmM2uFvVobHjS6OJj8Q.webp",
+    "아이유": "https://i.namu.wiki/i/ArWc3ye9V67iPpiZxkFOSw.webp",
+    "태연 (소녀시대)": "https://i.namu.wiki/i/9JZn9K8uW0SefB57V6rjLw.webp",
+    "희승 (ENHYPEN)": "https://i.namu.wiki/i/Lbi6hZy3s3fwN3rLOfYf2A.webp",
+    "제이 (ENHYPEN)": "https://i.namu.wiki/i/U9E0QjycM9aLCxqV8GfLPQ.webp",
+    "제이크 (ENHYPEN)": "https://i.namu.wiki/i/IoK53B5vhT-9sRGRphhXXQ.webp",
+    "성훈 (ENHYPEN)": "https://i.namu.wiki/i/MjWZMz6M1u0cWQt8uINnOA.webp",
+    "선우 (ENHYPEN)": "https://i.namu.wiki/i/HC9B0jO8-bBhkgqE-xtWig.webp",
+    "정원 (ENHYPEN)": "https://i.namu.wiki/i/dAsH-Nf8efl3oJm8i0VJDA.webp",
+    "니키 (ENHYPEN)": "https://i.namu.wiki/i/jEYmjvBslfRNdDlS9t87-Q.webp",
+    "RM (BTS)": "https://i.namu.wiki/i/KsY5aDgA_1ATxD8gRxm-fQ.webp",
+    "홍승한": "https://i.namu.wiki/i/TU4hQ2cxAE4Z2aH3L6n8VA.webp",
+    "효연 (소녀시대)": "https://i.namu.wiki/i/_h8xXgrvGJcDch9d0jvh9Q.webp",
+    "수호 (EXO)": "https://i.namu.wiki/i/Gyy5zzdV3QpLdvfKXz5PAg.webp",
+    "진 (BTS)": "https://i.namu.wiki/i/vgT9tJ19zN_3Jm4AwEJ-tQ.webp",
+    "차은우 (ASTRO)": "https://i.namu.wiki/i/FaD20JZnau2Y6HTbD1pOZw.webp",
+    "재현 (NCT)": "https://i.namu.wiki/i/Cpl4WlTfKzjcZEDnEhzZog.webp",
 }
 
 # 궁합 메시지
@@ -124,7 +121,6 @@ if st.button("✨ 궁합 보기 ✨"):
     for name, mbti in idol_mbti.items():
         # 기본 메시지
         message = "평범한 조합이지만 노력 여하에 따라 좋은 관계가 될 수 있어요 😊"
-        # compatibility dictionary 확인
         if (user_mbti, mbti) in compatibility:
             message = compatibility[(user_mbti, mbti)]
         elif (mbti, user_mbti) in compatibility:
@@ -134,15 +130,13 @@ if st.button("✨ 궁합 보기 ✨"):
         score = random.randint(70, 100)
         emoji = "💖" if score > 90 else "✨" if score > 80 else "😊"
 
-        # 이미지 경로 확인
-        img_path = idol_images.get(name, "images/default.png")
-        if not os.path.exists(img_path):
-            img_path = "images/default.png"  # 기본 이미지
+        # 이미지 URL
+        img_url = idol_images.get(name, "https://cdn-icons-png.flaticon.com/512/149/149071.png")
 
         # 카드 출력
         col1, col2 = st.columns([1, 3])
         with col1:
-            st.image(img_path, width=120, caption=name)
+            st.image(img_url, width=120, caption=name)
         with col2:
             st.markdown(
                 f"""
