@@ -1,14 +1,14 @@
+
 import streamlit as st
 import random
 
 st.set_page_config(page_title="아이돌 MBTI 궁합 테스트", page_icon="💕", layout="centered")
 
-# 아이돌 MBTI 데이터 (정원, 홍승한 먼저)
+# 아이돌 MBTI 데이터 (정원, 홍승한 먼저 배치)
 idol_mbti = {
     "정원 (ENHYPEN)": "ESTJ",
     "홍승한": "INFP",
     "정국 (BTS)": "INTP",
-    "뷔 (BTS)": "ENFP",
     "아이유": "INFJ",
     "태연 (소녀시대)": "ESFJ",
     "희승 (ENHYPEN)": "ISTP",
@@ -17,34 +17,13 @@ idol_mbti = {
     "성훈 (ENHYPEN)": "ISTJ",
     "선우 (ENHYPEN)": "ENFP",
     "니키 (ENHYPEN)": "ESFP",
+    "해찬 (NCT)": "ENFP",   # ✅ 뷔 대신 추가
     "RM (BTS)": "ENTJ",
     "효연 (소녀시대)": "INTJ",
     "수호 (EXO)": "ISFJ",
     "진 (BTS)": "ISFP",
     "차은우 (ASTRO)": "ESTP",
     "재현 (NCT)": "ENFJ",
-}
-
-# 아이돌 이미지 URL (정원, 홍승한 우선)
-idol_images = {
-    "정원 (ENHYPEN)": "https://i.namu.wiki/i/dAsH-Nf8efl3oJm8i0VJDA.webp",
-    "홍승한": "https://i.namu.wiki/i/TU4hQ2cxAE4Z2aH3L6n8VA.webp",
-    "정국 (BTS)": "https://i.namu.wiki/i/KB9eB1EoK7C0HhuGnTwDJQ.webp",
-    "뷔 (BTS)": "https://i.namu.wiki/i/RodMmM2uFvVobHjS6OJj8Q.webp",
-    "아이유": "https://i.namu.wiki/i/ArWc3ye9V67iPpiZxkFOSw.webp",
-    "태연 (소녀시대)": "https://i.namu.wiki/i/9JZn9K8uW0SefB57V6rjLw.webp",
-    "희승 (ENHYPEN)": "https://i.namu.wiki/i/Lbi6hZy3s3fwN3rLOfYf2A.webp",
-    "제이 (ENHYPEN)": "https://i.namu.wiki/i/U9E0QjycM9aLCxqV8GfLPQ.webp",
-    "제이크 (ENHYPEN)": "https://i.namu.wiki/i/IoK53B5vhT-9sRGRphhXXQ.webp",
-    "성훈 (ENHYPEN)": "https://i.namu.wiki/i/MjWZMz6M1u0cWQt8uINnOA.webp",
-    "선우 (ENHYPEN)": "https://i.namu.wiki/i/HC9B0jO8-bBhkgqE-xtWig.webp",
-    "니키 (ENHYPEN)": "https://i.namu.wiki/i/jEYmjvBslfRNdDlS9t87-Q.webp",
-    "RM (BTS)": "https://i.namu.wiki/i/KsY5aDgA_1ATxD8gRxm-fQ.webp",
-    "효연 (소녀시대)": "https://i.namu.wiki/i/_h8xXgrvGJcDch9d0jvh9Q.webp",
-    "수호 (EXO)": "https://i.namu.wiki/i/Gyy5zzdV3QpLdvfKXz5PAg.webp",
-    "진 (BTS)": "https://i.namu.wiki/i/vgT9tJ19zN_3Jm4AwEJ-tQ.webp",
-    "차은우 (ASTRO)": "https://i.namu.wiki/i/FaD20JZnau2Y6HTbD1pOZw.webp",
-    "재현 (NCT)": "https://i.namu.wiki/i/Cpl4WlTfKzjcZEDnEhzZog.webp",
 }
 
 # 궁합 설명
@@ -89,15 +68,15 @@ if st.button("궁합 보기"):
         # 궁합 점수
         score = get_score(user_mbti, mbti)
 
-        # 출력 (카드 스타일)
+        # 출력 (카드 스타일, 이미지 대신 아이콘)
         st.markdown(
             f"""
             <div style="padding:15px; margin:12px 0;
                         border-radius:15px; background-color:#fef9ff;
                         border:2px solid #f3c4fb;
-                        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
-                <img src="{idol_images.get(name, 'https://cdn-icons-png.flaticon.com/512/149/149071.png')}" 
-                     width="120" style="border-radius:15px; margin-bottom:10px;" />
+                        box-shadow: 2px 2px 10px rgba(0,0,0,0.1); text-align:center;">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" 
+                     width="100" style="border-radius:50%; margin-bottom:10px;" />
                 <h4 style="margin:0;">{name} ({mbti})</h4>
                 <p style="margin:4px 0 0 0;">👉 {message}</p>
                 <p style="font-weight:bold; color:#d63384;">궁합 점수: {score}%</p>
