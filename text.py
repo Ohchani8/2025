@@ -5,7 +5,7 @@ import datetime
 st.set_page_config(page_title="아이돌 궁합 테스트", page_icon="💕", layout="centered")
 
 # -----------------------------
-# CSS 스타일 (배경 + 폰트)
+# CSS 스타일
 # -----------------------------
 page_bg = """
 <style>
@@ -66,6 +66,10 @@ messages = [
     "환상의 팀워크를 보여줄 수 있어요 🌈",
 ]
 
+# 오늘의 운세 요소
+activities = ["춤 연습", "노래 감상", "팬 아트 만들기", "아이돌 영상 보기", "커버 영상 찍기"]
+colors = ["핑크 💖", "하늘 💙", "노랑 💛", "보라 💜", "초록 💚"]
+
 # -----------------------------
 # 유틸 함수
 # -----------------------------
@@ -78,13 +82,24 @@ def get_relation(score):
         return "💕 완벽한 궁합!"
     elif score > 80:
         return "🌸 꽤 잘 맞는 편이에요!"
+    elif score > 70:
+        return "🙂 괜찮은 케미!"
     else:
         return "🍀 서로 다른 매력이 있어요!"
+
+def score_meaning(score):
+    if score >= 91:
+        return "완벽한 궁합"
+    elif score >= 81:
+        return "꽤 잘 맞는 편"
+    elif score >= 71:
+        return "괜찮은 케미"
+    else:
+        return "서로 다른 매력"
 
 def show_card(name, style, tags, score, highlight=False):
     bg_color = "#ffe6f0" if highlight else "#fdf4ff"
     border_color = "#ff99cc" if highlight else "#d8b4fe"
-    relation = get_relation(score)
     tags_html = " ".join([f"<span style='color:#ff66a3; font-size:14px;'>{tag}</span>" for tag in tags])
     st.markdown(
         f"""
@@ -97,7 +112,7 @@ def show_card(name, style, tags, score, highlight=False):
             <p style="margin:6px 0 0 0;">{tags_html}</p>
             <p style="margin:6px 0 0 0; font-size:14px;">👉 {random.choice(messages)}</p>
             <p style="font-weight:bold; font-size:16px; color:#ff3399;">궁합 점수: {score}% 🍭</p>
-            <p style="font-size:12px; color:#999;">(높을수록 궁합이 좋아요!)</p>
+            <p style="font-size:12px; color:#999;">({score_meaning(score)})</p>
         </div>
         """,
         unsafe_allow_html=True
@@ -116,17 +131,12 @@ user_choice = st.selectbox("당신의 취향은?", user_styles)
 if st.button("궁합 보기"):
     st.subheader(f"✨ {nickname}님의 아이돌 궁합 결과 ✨")
 
-    # 특별 추천
-    st.markdown("## 🌟 특별 추천 (ENHYPEN 전용) 🌟")
-    for name, (style, tags) in idol_styles.items():
-        if "ENHYPEN" in name or name == "홍승한":
-            score = get_score(user_choice, style)
-            show_card(name, style, tags, score, highlight=True)
-
-    # 맞춤 추천
+    # 맞춤 추천 (점수 기반 강화)
     st.markdown("## 🎀 당신에게 꼭 맞는 맞춤 추천 🎀")
     sorted_idols = sorted(idol_styles.items(), key=lambda x: get_score(user_choice, x[1][0]), reverse=True)
-    name, (style, tags) = sorted_idols[0]
+    top_candidates = sorted_idols[:3]
+    match_idol = random.choice(top_candidates)
+    name, (style, tags) = match_idol
     score = get_score(user_choice, style)
     show_card(name, style, tags, score, highlight=True)
 
@@ -140,7 +150,7 @@ if st.button("궁합 보기"):
     for score, name, style, tags in scores[:3]:
         show_card(name, style, tags, score)
 
-    # 오늘의 아이돌
+    # 오늘의 아이돌 + 운세
     st.markdown("## 🍀 오늘의 아이돌 운세 🍀")
     today = datetime.date.today().strftime("%Y-%m-%d")
     random.seed(today)
@@ -148,3 +158,9 @@ if st.button("궁합 보기"):
     name, (style, tags) = lucky
     score = get_score(user_choice, style)
     show_card(name, style, tags, score, highlight=True)
+
+    # 오늘의 추천 활동 + 색상
+    today_activity = random.choice(activities)
+    today_color = random.choice(colors)
+    st.markdown(f"<p style='text-align:center; font-size:16px;'>오늘의 추천 활동: <b>{today_activity}</b></p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center; font-size:16px;'>오늘의 행운 색상: <b>{today_color}</b></p>", unsafe_allow_html=True)
