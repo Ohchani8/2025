@@ -129,10 +129,10 @@ if st.button("궁합 보기"):
     top5 = scores[:5]
     idols = [n for _, n, _, _ in top5]
     values = [s for s, _, _, _ in top5]
-    emojis = ["💖", "🌸", "🍭", "🐰", "✨"]  # 상위 5위 이모지
+    emojis = ["💖", "🌸", "🍭", "🐰", "✨"]
 
     fig, ax = plt.subplots(figsize=(6,4))
-    bars = ax.barh(idols[::-1], values[::-1], color="#ffb6c1")
+    ax.barh(idols[::-1], values[::-1], color="#ffb6c1")
     ax.set_xlim(60, 100)
     ax.set_xlabel("궁합 점수 (%)")
     ax.set_title("TOP 5 아이돌 궁합 🌈")
@@ -140,7 +140,8 @@ if st.button("궁합 보기"):
         ax.text(v + 0.5, i, f"{v}% {e}", va='center', fontsize=12)
     fig.patch.set_facecolor('#fff0f5')
     ax.set_facecolor('#fdf4ff')
-    st.pyplot(fig)
+    st.pyplot(fig, clear_figure=True)
+    plt.close(fig)
 
     # 오늘의 행운 아이템
     st.markdown("## 🍀 오늘의 행운 아이템 🍀")
