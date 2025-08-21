@@ -100,7 +100,7 @@ user_choice = st.selectbox("당신의 취향은?", user_styles)
 if st.button("궁합 보기"):
     st.subheader(f"✨ {nickname}님의 아이돌 궁합 결과 ✨")
 
-    # 궁합 카드
+    # 모든 아이돌 카드
     scores = []
     for name, style in idol_styles.items():
         score = get_score(user_choice, name)
