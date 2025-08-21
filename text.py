@@ -131,4 +131,3 @@ if st.button("궁합 보기"):
     for name, (style, tags) in idol_styles.items():
         score = get_score(user_choice, style)
         scores.append((scor
-
