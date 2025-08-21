@@ -1,7 +1,6 @@
 import streamlit as st
 import random
 import datetime
-import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="아이돌 궁합 테스트", page_icon="💕", layout="centered")
 
@@ -138,28 +137,8 @@ if st.button("궁합 보기"):
         score = get_score(user_choice, style)
         scores.append((score, name, style, tags))
     scores.sort(reverse=True)
-    
-    # 카드 출력
     for score, name, style, tags in scores[:3]:
         show_card(name, style, tags, score)
-    
-    # -----------------------------
-    # TOP3 그래프
-    top3_scores = scores[:3]
-    names = [x[1] for x in top3_scores]
-    values = [x[0] for x in top3_scores]
-
-    fig, ax = plt.subplots()
-    bars = ax.bar(names, values, color=["#ff99cc", "#ff66b2", "#ff3399"])
-    ax.set_ylim(0, 100)
-    ax.set_ylabel("궁합 점수 (%)")
-    ax.set_title("TOP 3 궁합 그래프")
-    
-    # 숫자 표시
-    for bar, value in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 2, f"{value}%", ha='center', va='bottom', fontsize=12, color="#ff3399")
-
-    st.pyplot(fig)
 
     # 오늘의 아이돌
     st.markdown("## 🍀 오늘의 아이돌 운세 🍀")
