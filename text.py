@@ -1,135 +1,123 @@
 import streamlit as st
-import random
-import matplotlib.pyplot as plt
 
-# -----------------------------
-# 페이지 설정
-# -----------------------------
+# -------------------- 설정 --------------------
 st.set_page_config(
-    page_title="아이돌 궁합 테스트",
-    page_icon="💕",
+    page_title="MBTI 직업 추천", 
+    page_icon="💼",
     layout="centered"
 )
 
-# -----------------------------
-# CSS 꾸미기
-# -----------------------------
+# CSS 스타일
 st.markdown("""
 <style>
-.stApp {
-    background: linear-gradient(135deg, #ffe6f0, #fdf4ff, #e0f7fa);
-    font-family: "Comic Sans MS", "Arial Rounded MT Bold", sans-serif;
+body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: #f4f6f8;
 }
-h1, h2, h3, h4 {
-    color: #ff66b2;
-    text-align: center;
+h1 {
+    color: #4a6fa5;
+}
+.job-card {
+    background-color: #ffffff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
 }
 </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------
-# 아이돌 데이터
-# -----------------------------
-idol_styles = {
-    "정원 (ENHYPEN)": "책임감 있는 리더",
-    "희승 (ENHYPEN)": "차분한 현실주의자",
-    "제이 (ENHYPEN)": "재치 있는 아이디어 뱅크",
-    "제이크 (ENHYPEN)": "성실한 노력파",
-    "성훈 (ENHYPEN)": "차분한 카리스마",
-    "선우 (ENHYPEN)": "장난꾸러기 무드메이커",
-    "니키 (ENHYPEN)": "열정 가득한 댄서",
-    "홍승한": "따뜻한 감성형",
-    "해찬 (NCT)": "에너지 넘치는 분위기 메이커",
-    "마크 (NCT)": "다재다능 올라운더",
-    "재현 (NCT)": "따뜻한 공감러",
-    "차은우 (ASTRO)": "비주얼 천재",
-    "유우시 (NCT WISH)": "밝고 긍정적인 매력",
-    "리쿠 (NCT WISH)": "든든한 에너지형",
-    "오시온 (NCT WISH)": "순수한 청량미",
-    "카리나 (aespa)": "카리스마 리더",
-    "윈터 (aespa)": "청아한 보컬",
-    "닝닝 (aespa)": "자유로운 영혼",
-    "지젤 (aespa)": "힙한 래퍼",
+# -------------------- 데이터 --------------------
+job_recommendations = {
+    "INTJ": [("데이터 사이언티스트", "데이터 분석 및 모델링 전문가"),
+             ("전략 컨설턴트", "기업의 전략 수립 및 문제 해결"),
+             ("소프트웨어 아키텍트", "시스템 설계 및 구조 결정")],
+    "ENTP": [("창업가", "새로운 비즈니스 창출"),
+             ("광고 기획자", "마케팅 캠페인 기획"),
+             ("기술 혁신가", "최신 기술 적용 및 개선")],
+    "INFJ": [("작가", "책, 소설, 시나리오 창작"),
+             ("상담사", "개인/심리 상담"),
+             ("인권 변호사", "사회적 약자 변호")],
+    "ESFP": [("이벤트 플래너", "행사 기획 및 진행"),
+             ("배우", "연기 및 무대 활동"),
+             ("마케팅 전문가", "브랜드 홍보 및 세일즈")],
+    "ISTJ": [("회계사", "재무 관리 및 회계"),
+             ("프로젝트 매니저", "프로젝트 계획 및 관리"),
+             ("품질 관리자", "품질 검사 및 보증")],
+    "ENFP": [("크리에이티브 디렉터", "창의적 콘텐츠 기획"),
+             ("여행 작가", "여행 기록 및 가이드"),
+             ("소셜 미디어 매니저", "온라인 마케팅 및 커뮤니티 관리")],
+    "ENTJ": [("경영 컨설턴트", "기업 운영 최적화"),
+             ("투자 분석가", "시장 분석 및 투자 결정"),
+             ("기업 임원", "조직 운영 및 리더십")],
+    "ISFJ": [("간호사", "환자 치료 및 관리"),
+             ("교사", "학생 교육 및 지도"),
+             ("행정 담당자", "사무 및 조직 지원")],
+    "ISTP": [("기계 엔지니어", "기계 설계 및 제작"),
+             ("자동차 정비사", "차량 점검 및 수리"),
+             ("드론 조종사", "드론 운용 및 촬영")],
+    "ESTP": [("영업 전문가", "제품 및 서비스 판매"),
+             ("구조대원", "응급 구조 및 안전 관리"),
+             ("스포츠 코치", "선수 훈련 지도")],
+    "INFP": [("작사가", "노랫말 창작"),
+             ("아동 심리치료사", "아이들의 심리 지원"),
+             ("환경 운동가", "환경 보호 및 지속 가능성 촉진")],
+    "ENFJ": [("홍보 전문가", "브랜드 커뮤니케이션"),
+             ("교육 컨설턴트", "교육 프로그램 기획"),
+             ("비영리 단체 리더", "사회 기여 프로젝트 운영")],
+    "ESFJ": [("이벤트 코디네이터", "행사 진행 및 기획"),
+             ("호텔 매니저", "호텔 운영 관리"),
+             ("고객 서비스 매니저", "고객 경험 관리")],
+    "ISFP": [("사진작가", "사진 촬영 및 편집"),
+             ("플로리스트", "꽃 디자인 및 판매"),
+             ("인테리어 디자이너", "공간 디자인 및 시공")],
+    "ESTJ": [("군 장교", "군대 지휘 및 관리"),
+             ("공장 관리자", "생산 라인 운영"),
+             ("행정 공무원", "행정 서비스 제공")],
+    "INTP": [("연구원", "학문 및 기술 연구"),
+             ("시스템 분석가", "IT 시스템 분석"),
+             ("발명가", "새로운 기술 개발")]
 }
 
-user_styles = [
-    "차분한 스타일", "에너지 넘치는 스타일", "리더형 스타일",
-    "유머러스한 스타일", "예술적인 스타일", "따뜻한 스타일"
-]
+# -------------------- 사이드바 --------------------
+st.sidebar.title("📌 앱 소개")
+st.sidebar.info(
+    "MBTI 성격 유형에 맞는 추천 직업을 알려주는 앱입니다.\n\n"
+    "MBTI를 선택하고 맞춤 직업 추천을 받아보세요!"
+)
+st.sidebar.write("개발자: ChatGPT")
 
-messages = [
-    "찰떡궁합! 시너지 폭발 💖",
-    "따뜻하고 편안한 관계 🌷",
-    "티격태격하지만 즐거운 케미 🎶",
-    "서로 배울 점이 많아요 ✨",
-    "의외로 잘 맞는 조합이에요 ⚡",
-    "환상의 팀워크를 보여줄 수 있어요 🌈",
-]
+# -------------------- 메인 --------------------
+st.title("💼 MBTI 기반 직업 추천")
 
-# -----------------------------
-# 함수 정의
-# -----------------------------
-def get_score(user_choice, idol_name):
-    random.seed(user_choice + idol_name)
-    return random.randint(60, 100)
+selected_mbti = st.selectbox("🔍 당신의 MBTI를 선택하세요", list(job_recommendations.keys()))
 
-def show_card(name, style, score):
-    st.markdown(f"""
-    <div style="padding:20px; margin:10px 0;
-                border-radius:20px; background-color:#fdf4ff;
-                border:2px dashed #d8b4fe;
-                box-shadow: 2px 2px 8px rgba(255,182,193,0.3);
-                text-align:center;">
-        <h4 style="color:#ff3399;">💖 {name} 💖</h4>
-        <p>스타일: <b>{style}</b></p>
-        <p>궁합 점수: <b>{score}%</b> 🍭</p>
-        <p>{random.choice(messages)}</p>
-    </div>
-    """, unsafe_allow_html=True)
-    st.progress(score / 100)
+if selected_mbti:
+    st.subheader(f"✨ {selected_mbti} 추천 직업")
+    for job, desc in job_recommendations[selected_mbti]:
+        st.markdown(f"""
+        <div class='job-card'>
+            <h4>💡 {job}</h4>
+            <p>{desc}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-# -----------------------------
-# 메인 화면
-# -----------------------------
-st.title("💞 아이돌 궁합 테스트 💞")
-st.write("당신의 취향 스타일을 선택하고, 최애 아이돌과의 궁합을 확인해보세요!")
+# -------------------- 검색 기능 --------------------
+st.subheader("🔎 직업 검색")
+search_job = st.text_input("관심 있는 직업 키워드를 입력하세요:")
 
-nickname = st.text_input("당신의 이름(닉네임)을 입력해주세요 ✨", "팬")
-user_choice = st.selectbox("당신의 취향은?", user_styles)
-
-if st.button("궁합 보기"):
-    st.subheader(f"✨ {nickname}님의 아이돌 궁합 결과 ✨")
-
-    # 모든 아이돌 카드
-    scores = []
-    for name, style in idol_styles.items():
-        score = get_score(user_choice, name)
-        scores.append((score, name, style))
-        show_card(name, style, score)
-
-    # TOP5 궁합 그래프
-    st.markdown("## 🏆 TOP 5 궁합 아이돌 🌈")
-    scores.sort(reverse=True)
-    top5 = scores[:5]
-    names = [n for s,n,_ in top5]
-    values = [s for s,_,_ in top5]
-    emojis = ["💖","🌸","🍭","🐰","✨"]
-
-    fig, ax = plt.subplots(figsize=(6,4))
-    ax.barh(names[::-1], values[::-1], color="#ffb6c1")
-    ax.set_xlim(60,100)
-    ax.set_xlabel("궁합 점수 (%)")
-    ax.set_title("TOP 5 아이돌 궁합 🌈")
-
-    for i,(v,e) in enumerate(zip(values[::-1], emojis)):
-        ax.text(v + 0.5, i, f"{v}% {e}", va='center', fontsize=12)
-
-    fig.patch.set_facecolor('#fff0f5')
-    ax.set_facecolor('#fdf4ff')
-    st.pyplot(fig, clear_figure=True)
-    plt.close(fig)
-
-    # 오늘의 행운 아이템
-    st.markdown("## 🍀 오늘의 행운 아이템 🍀")
-    items = ["🍭 사탕", "🎧 이어폰", "📸 카메라", "🐰 인형", "🌸 꽃"]
-    st.write(f"오늘의 아이템은 **{random.choice(items)}** 이에요!")
+if search_job:
+    matched = []
+    for jobs in job_recommendations.values():
+        matched.extend([j for j in jobs if search_job in j[0] or search_job in j[1]])
+    if matched:
+        st.success(f"🔍 {len(matched)}개의 직업을 찾았습니다!")
+        for job, desc in matched:
+            st.markdown(f"""
+            <div class='job-card'>
+                <h4>💡 {job}</h4>
+                <p>{desc}</p>
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.warning("검색 결과가 없습니다.")
