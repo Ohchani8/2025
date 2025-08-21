@@ -1,22 +1,20 @@
 import streamlit as st
 import random
 import datetime
+import pandas as pd
 
 st.set_page_config(page_title="아이돌 궁합 테스트", page_icon="💕", layout="centered")
 
 # -----------------------------
-# CSS 스타일 (배경 + 폰트 + 카드)
+# CSS 스타일
 # -----------------------------
 page_bg = """
 <style>
-/* 전체 배경 그라데이션 */
 .stApp {
     background: linear-gradient(135deg, #ffe6f0, #fdf4ff, #e0f7fa);
     background-attachment: fixed;
     font-family: "Comic Sans MS", "Arial Rounded MT Bold", sans-serif;
 }
-
-/* 헤더 타이틀 */
 h1, h2, h3, h4 {
     font-family: "Comic Sans MS", "Arial Rounded MT Bold", sans-serif;
     color: #ff66b2;
@@ -30,7 +28,6 @@ st.markdown(page_bg, unsafe_allow_html=True)
 # 아이돌 데이터
 # -----------------------------
 idol_styles = {
-    # ENHYPEN 고정 (특별추천)
     "정원 (ENHYPEN)": ("책임감 있는 리더", ["#리더", "#든든"]),
     "희승 (ENHYPEN)": ("차분한 현실주의자", ["#현실적", "#차분"]),
     "제이 (ENHYPEN)": ("재치 있는 아이디어 뱅크", ["#유머", "#센스"]),
@@ -39,7 +36,6 @@ idol_styles = {
     "선우 (ENHYPEN)": ("장난꾸러기 무드메이커", ["#장난꾸러기", "#웃음"]),
     "니키 (ENHYPEN)": ("열정 가득한 댄서", ["#열정", "#댄서"]),
     "홍승한": ("따뜻한 감성형", ["#감성", "#따뜻"]),
-    # 기타 아이돌
     "해찬 (NCT)": ("에너지 넘치는 분위기 메이커", ["#에너지", "#비타민"]),
     "마크 (NCT)": ("다재다능 올라운더", ["#랩", "#춤", "#프로"]),
     "재현 (NCT)": ("따뜻한 공감러", ["#다정", "#공감"]),
@@ -53,9 +49,6 @@ idol_styles = {
     "지젤 (aespa)": ("힙한 래퍼", ["#힙합", "#자신감"]),
 }
 
-# -----------------------------
-# 유저 선택 옵션
-# -----------------------------
 user_styles = [
     "차분한 스타일",
     "에너지 넘치는 스타일",
@@ -65,7 +58,6 @@ user_styles = [
     "따뜻한 스타일",
 ]
 
-# 궁합 메시지
 messages = [
     "찰떡궁합! 둘이 만나면 시너지 폭발 💖",
     "따뜻하고 편안한 관계 🌷",
@@ -79,7 +71,7 @@ messages = [
 # 유틸 함수
 # -----------------------------
 def get_score(user_choice, idol_style):
-    random.seed(user_choice + idol_style)
+    random.seed(hash(user_choice + idol_style))
     return random.randint(60, 100)
 
 def get_relation(score):
@@ -91,9 +83,8 @@ def get_relation(score):
         return "🍀 서로 다른 매력이 있어요!"
 
 def show_card(name, style, tags, score, highlight=False):
-    bg_color = "#ffe6f0" if highlight else "#fdf4ff"   # 파스텔톤
+    bg_color = "#ffe6f0" if highlight else "#fdf4ff"
     border_color = "#ff99cc" if highlight else "#d8b4fe"
-    relation = get_relation(score)
     tags_html = " ".join([f"<span style='color:#ff66a3; font-size:14px;'>{tag}</span>" for tag in tags])
     st.markdown(
         f"""
@@ -110,7 +101,6 @@ def show_card(name, style, tags, score, highlight=False):
         """,
         unsafe_allow_html=True
     )
-    st.progress(score / 100)
 
 # -----------------------------
 # 메인 화면
@@ -119,42 +109,26 @@ st.title("💞 아이돌 궁합 테스트 💞")
 st.write("👉 당신의 취향 스타일을 고르고, 최애와의 궁합을 확인해보세요!")
 
 nickname = st.text_input("당신의 이름(닉네임)을 입력해주세요 ✨", "팬")
-
 user_choice = st.selectbox("당신의 취향은?", user_styles)
 
 if st.button("궁합 보기"):
     st.subheader(f"✨ {nickname}님의 아이돌 궁합 결과 ✨")
 
-    # 특별 추천 (ENHYPEN만)
-    st.markdown("## 🌟 특별 추천 (ENHYPEN 전용) 🌟")
-    for name, (style, tags) in idol_styles.items():
-        if "ENHYPEN" in name or name == "홍승한":
-            score = get_score(user_choice, style)
-            show_card(name, style, tags, score, highlight=True)
-
-    # 내 취향 맞춤 추천 (랜덤 1명)
+    # -----------------------------
+    # 맞춤 추천 (랜덤 1명)
+    # -----------------------------
     st.markdown("## 🎀 당신에게 꼭 맞는 맞춤 추천 🎀")
     match_idol = random.choice(list(idol_styles.items()))
     name, (style, tags) = match_idol
     score = get_score(user_choice, style)
     show_card(name, style, tags, score, highlight=True)
 
+    # -----------------------------
     # TOP 3 궁합
+    # -----------------------------
     st.markdown("## 🏆 궁합 TOP 3 🏆")
     scores = []
     for name, (style, tags) in idol_styles.items():
         score = get_score(user_choice, style)
-        scores.append((score, name, style, tags))
-    scores.sort(reverse=True)
-    for score, name, style, tags in scores[:3]:
-        show_card(name, style, tags, score)
-
-    # 오늘의 아이돌
-    st.markdown("## 🍀 오늘의 아이돌 운세 🍀")
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    random.seed(today)
-    lucky = random.choice(list(idol_styles.items()))
-    name, (style, tags) = lucky
-    score = get_score(user_choice, style)
-    show_card(name, style, tags, score, highlight=True)
+        scores.append((scor
 
