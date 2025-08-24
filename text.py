@@ -124,4 +124,37 @@ nickname = st.text_input("당신의 이름(닉네임)을 입력해주세요 ✨"
 user_choice = st.selectbox("당신의 취향은?", user_styles)
 
 if st.button("궁합 보기"):
-    st.subh
+    st.subheader(f"✨ {nickname}님의 아이돌 궁합 결과 ✨")
+
+    # 내 취향 맞춤 추천 (상위 3명 중 랜덤 1명)
+    st.markdown("## 🎀 당신에게 꼭 맞는 맞춤 추천 🎀")
+    scores = []
+    for name, (style, tags) in idol_styles.items():
+        score = get_score(user_choice, style)
+        scores.append((score, name, style, tags))
+    scores.sort(reverse=True)
+    match_idol = random.choice(scores[:3])
+    score, name, style, tags = match_idol
+    show_card(name, style, tags, score, highlight=True)
+
+    # TOP 3 궁합
+    st.markdown("## 🏆 궁합 TOP 3 🏆")
+    for score, name, style, tags in scores[:3]:
+        show_card(name, style, tags, score)
+
+    # 오늘의 아이돌 운세
+    st.markdown("## 🍀 오늘의 아이돌 운세 🍀")
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    random.seed(today)
+    lucky = random.choice(list(idol_styles.items()))
+    name, (style, tags) = lucky
+    score = get_score(user_choice, style)
+    show_card(name, style, tags, score, highlight=True)
+
+    # 추가 재미 요소
+    st.markdown("## 🌟 오늘의 추천 🌟")
+    activities = ["노래 듣기", "춤 연습", "최애 직캠 보기", "팬아트 그리기", "팬카페 활동", "앨범 감상"]
+    colors = ["핑크 💖", "하늘색 💎", "보라색 🌌", "노랑 🌼", "초록 🍀"]
+    st.write(f"🎶 오늘의 추천 활동: **{random.choice(activities)}**")
+    st.write(f"🎨 오늘의 색상: **{random.choice(colors)}**")
+    st.write(f"⭐ 행운 포인트: **+{random.randint(1,10)} 에너지**")
